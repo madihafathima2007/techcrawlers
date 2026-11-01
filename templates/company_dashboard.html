@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Company Overview · COLLAB{% endblock %}
+{% block crumb %}COMPANY OVERVIEW{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">YOUR BRAND OPERATIONS</div><h1>Company <span class="lime">workspace.</span></h1><p class="sub">Discover creators, run campaigns and keep every partnership moving.</p></div><a class="btn primary" href="{{url_for('marketplace')}}">Explore creators ↗</a></div>
+<div class="stats-grid company-stats">
+<div class="stat-card"><small>Active partnerships</small><strong>{{stats.active_deals}}</strong><span>Accepted collaborations</span></div>
+<div class="stat-card"><small>Open campaigns</small><strong>{{stats.open_campaigns}}</strong><span>Visible in marketplace</span></div>
+<div class="stat-card"><small>Pending proposals</small><strong>{{stats.pending_proposals}}</strong><span>Awaiting your review</span></div>
+<div class="stat-card"><small>Awaiting approval</small><strong>{{stats.awaiting_approval}}</strong><span>Creator submissions</span></div>
+<div class="stat-card"><small>Committed budget</small><strong>₹{{'%.0f'|format(stats.committed_budget)}}</strong><span>Across active deals</span></div>
+</div>
+<div class="company-dashboard-grid">
+<section class="panel"><div class="panel-head"><div><div class="eyebrow">PARTNERSHIPS</div><h2>Active brand deals</h2></div><a href="{{url_for('trust_center')}}">View all ↗</a></div>
+{% for deal in active_deals %}<div class="company-list-row"><div><b>{{deal.title}}</b><small>{{deal.creator.name}} · Deadline {{deal.deadline or 'Not set'}}</small></div><a class="btn secondary" href="{{url_for('deal_room',collab_id=deal.id)}}">Open room</a></div>{% else %}<p class="sub">No active deals yet. Find creators and start your first partnership.</p><a class="btn secondary" href="{{url_for('marketplace')}}">Discover creators</a>{% endfor %}</section>
+<section class="panel"><div class="panel-head"><div><div class="eyebrow">ACTION REQUIRED</div><h2>Incoming proposals</h2></div><a href="{{url_for('marketplace')}}">Review all ↗</a></div>
+{% for proposal in pending %}<div class="company-list-row"><div><b>{{proposal.creator.name}}</b><small>{{proposal.opportunity.title}} · {{proposal.proposed_fee or 'Fee not specified'}}</small></div><span class="status">Pending</span></div>{% else %}<p class="sub">You're all caught up. New creator proposals will appear here.</p>{% endfor %}</section>
+<section class="panel"><div class="panel-head"><div><div class="eyebrow">CAMPAIGN PIPELINE</div><h2>Your campaigns</h2></div><a href="{{url_for('marketplace')}}">Manage ↗</a></div>
+{% for item in opportunities %}<div class="company-list-row"><div><b>{{item.title}}</b><small>{{item.platform}} · {{item.niche or 'All niches'}} · Deadline {{item.deadline or 'Not set'}}</small></div><span class="status">{{item.status}}</span></div>{% else %}<p class="sub">No campaigns published yet.</p>{% endfor %}</section>
+<section class="panel"><div class="panel-head"><div><div class="eyebrow">QUICK ACTIONS</div><h2>Keep work moving</h2></div></div><div class="company-quick-actions"><a href="{{url_for('marketplace')}}">＋ Publish a campaign</a><a href="{{url_for('company_calendar')}}">▦ View campaign calendar</a><a href="{{url_for('trust_center')}}">✧ Track payments & trust</a><a href="{{url_for('finance_page')}}">₹ Open finances</a><a href="{{url_for('analytics_page')}}">↗ View analytics</a></div></section>
+</div>
+{% endblock %}

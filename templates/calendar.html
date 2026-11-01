@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Content Calendar · COLLAB{% endblock %}
+{% block crumb %}CONTENT CALENDAR{% endblock %}
+{% block content %}
+<div class="page-head calendar-page-head">
+  <div><div class="eyebrow">PUBLISH WITH A PLAN</div><h1>Content calendar</h1><p class="sub">See what's coming up, organise your posts and keep every channel on schedule.</p></div>
+  <a class="btn btn-primary" href="#add-content">＋ Add content</a>
+</div>
+<div class="calendar-summary">
+  <div class="calendar-summary-card"><span>THIS MONTH</span><b>{{ posts|length }}</b><small>scheduled content items</small></div>
+  <div class="calendar-summary-card"><span>READY TO PUBLISH</span><b>{{ posts|selectattr('status','equalto','Ready')|list|length }}</b><small>reviewed and ready</small></div>
+  <div class="calendar-summary-card"><span>PUBLISHED</span><b>{{ posts|selectattr('status','equalto','Published')|list|length }}</b><small>marked as published</small></div>
+</div>
+<div class="panel calendar-panel">
+  <div class="calendar-toolbar">
+    <div><div class="eyebrow">YOUR SCHEDULE</div><h2>{{ month_label }}</h2></div>
+    <div class="calendar-nav"><a class="btn btn-secondary" href="{{ url_for('calendar_page', month=previous_month) }}" aria-label="Previous month">←</a><a class="btn btn-secondary" href="{{ url_for('calendar_page') }}">Today</a><a class="btn btn-secondary" href="{{ url_for('calendar_page', month=next_month) }}" aria-label="Next month">→</a></div>
+  </div>
+  <div class="calendar-grid">
+    {% for weekday in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}<div class="calendar-weekday">{{ weekday }}</div>{% endfor %}
+    {% for week in weeks %}
+      {% for day in week %}
+        {% if day %}
+          {% set day_key = '%04d-%02d-%02d'|format(selected_month.year, selected_month.month, day) %}
+          <div class="calendar-day {% if day_key == today %}is-today{% endif %}">
+            <div class="calendar-day-number">{{ day }}{% if day_key == today %}<span>Today</span>{% endif %}</div>
+            <div class="calendar-day-events">
+              {% for post in events_by_day.get(day, []) %}
+                <div class="calendar-event status-{{ post.status|lower|replace(' ','-') }}" title="{{ post.title }} · {{ post.platform }}">
+                  <b>{{ post.title }}</b><small>{{ post.platform }} · {{ post.status }}</small>
+                  <div class="calendar-event-actions">
+                    <form method="post" action="{{ url_for('calendar_status', post_id=post.id) }}"><select name="status" aria-label="Update status" onchange="this.form.submit()"><option value="Idea" {% if post.status=='Idea' %}selected{% endif %}>Idea</option><option value="Draft" {% if post.status=='Draft' %}selected{% endif %}>Draft</option><option value="Ready" {% if post.status=='Ready' %}selected{% endif %}>Ready</option><option value="Published" {% if post.status=='Published' %}selected{% endif %}>Published</option></select></form>
+                    <form method="post" action="{{ url_for('calendar_delete', post_id=post.id) }}" onsubmit="return confirm('Remove this calendar item?')"><button type="submit" aria-label="Delete {{ post.title }}">×</button></form>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}<div class="calendar-day is-empty"></div>{% endif %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+  <div class="calendar-legend"><span><i class="legend-dot idea"></i> Idea</span><span><i class="legend-dot draft"></i> Draft</span><span><i class="legend-dot ready"></i> Ready</span><span><i class="legend-dot published"></i> Published</span></div>
+</div>
+<div class="panel calendar-add-panel" id="add-content">
+  <div class="panel-head"><div><div class="eyebrow">PLAN A POST</div><h2>Add to your calendar</h2></div><span class="tag">New content</span></div>
+  <form method="post" class="calendar-form">
+    <label>Content title<input name="title" maxlength="220" placeholder="e.g. Behind the scenes — studio setup" required></label>
+    <div class="calendar-form-grid">
+      <label>Platform<select name="platform"><option>Instagram</option><option>YouTube</option><option>LinkedIn</option><option>TikTok</option><option>Facebook</option><option>X</option><option>Other</option></select></label>
+      <label>Format<select name="content_type"><option>Post</option><option>Reel</option><option>Story</option><option>Carousel</option><option>Short</option><option>Video</option><option>Article</option></select></label>
+      <label>Publish date &amp; time<input type="datetime-local" name="scheduled_for" value="{{ selected_month.strftime('%Y-%m') }}-{{ '%02d'|format(selected_month.day) }}T12:00" required></label>
+      <label>Status<select name="status"><option>Idea</option><option>Draft</option><option>Ready</option><option>Published</option></select></label>
+    </div>
+    <label>Caption / notes<textarea name="caption" rows="3" placeholder="Add a caption, brief or reminder (optional)"></textarea></label>
+    <button class="btn btn-primary" type="submit">＋ Save to calendar</button>
+  </form>
+  <p class="calendar-note">COLLAB tracks your publishing plan. It does not automatically publish to social platforms yet.</p>
+</div>
+{% endblock %}

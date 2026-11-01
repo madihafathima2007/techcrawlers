@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% block title %}Campaign Calendar · COLLAB{% endblock %}{% block crumb %}CAMPAIGN CALENDAR{% endblock %}{% block content %}
+<div class="page-head"><div><div class="eyebrow">COMPANY OPERATIONS</div><h1>Campaign <span class="lime">calendar.</span></h1><p class="sub">A timeline of campaign deadlines, creator deliverables and payment due dates.</p></div></div>
+<div class="panel"><div class="panel-head"><h2>Upcoming milestones</h2><span class="count">{{events|length}}</span></div>{% for event in events %}<div class="company-list-row"><div><b>{{event.title}}</b><small>{{event.kind}} · {{event.partner}}</small></div><strong>{{event.date}}</strong><a class="btn secondary" href="{{event.url}}">Open ↗</a></div>{% else %}<p class="sub">No campaign deadlines yet. Set deadlines in each Brand Deal Room.</p>{% endfor %}</div>
+{% endblock %}

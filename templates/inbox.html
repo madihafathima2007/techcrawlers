@@ -1,0 +1,21 @@
+{% extends 'base.html' %}{% block title %}Smart inbox · COLLAB
+
+{% endblock %}{% block crumb %}SMART INBOX
+
+{% endblock %}{% block content %}
+<div class="page-head"><div><div class="eyebrow">LESS EMAIL. MORE MOMENTUM.</div><h1>Your <span class="lime">smart inbox.</span></h1><p class="sub">Turn incoming messages into useful actions and thoughtful reply drafts.</p></div>{% if gmail_connected %}<form method="post" action="/gmail/sync" style="display:inline"><button class="btn primary" type="submit">↻ Sync Gmail messages</button></form> <a class="btn outline" href="/gmail/connect">Reconnect Gmail</a>{% elif gmail_ready %}<a class="btn primary" href="/gmail/connect">Connect Gmail ↗</a>{% else %}<span class="tag">Gmail setup required</span>{% endif %}</div>
+<div class="notice">You stay in control: COLLAB only prepares reply drafts. A message is sent only after you review it and click <b>Approve &amp; Send</b>. Gmail sending requires a separate Google permission. Manual drafts can be copied but are never sent by COLLAB.</div>
+<div class="panel"><div class="panel-head"><div><div class="eyebrow">EMAIL WORKFLOW</div><h2>Recent messages</h2></div></div>{% if emails %}{% for e in emails %}<div class="email-row"><div class="mail-icon">✉</div><div class="email-info"><b>{{e.subject}}</b><small>{{e.sender}} · {{e.received_at}}</small><div class="email-preview">{{ e.snippet[:260] }}</div>
+<details class="email-full-content"><summary>Read full email</summary><div class="email-body">{{ e.snippet }}</div></details></div><button class="btn outline" onclick="processEmail({{e.id}},this)">✳ Review actions</button><button class="btn primary" onclick="draftEmailReply({{e.id}},this)">✉ Draft reply</button></div>{% endfor %}{% else %}<div class="empty">No synced emails yet. If Gmail is connected, use the Sync Gmail messages button above. Otherwise connect your Gmail account first.</div>{% endif %}</div>
+<div class="panel manual-email"><div class="eyebrow">REPLY ASSISTANT</div><h2>Generate a contextual reply</h2><p class="sub">Paste an email, and COLLAB will prepare an editable response. This prototype uses local rules and templates; it does not call an external AI service.</p><div class="form-grid"><label>Sender email (optional)<input id="reply-recipient" type="email" placeholder="brand@example.com"></label><label>Email subject<input id="reply-subject" placeholder="Collaboration opportunity"></label></div><label>Original email<textarea id="reply-source" rows="5" placeholder="Paste the email you received..."></textarea></label><button class="btn primary" onclick="draftManualReply(this)">Generate reply draft →</button><div id="reply-editor" class="reply-editor" hidden><div class="eyebrow">REVIEW BEFORE SENDING</div><label>To<input id="draft-to" type="email"></label><label>Subject<input id="draft-subject"></label><label>Reply<textarea id="draft-body" rows="8"></textarea></label><div class="form-row"><button class="btn outline" type="button" onclick="copyReplyDraft()">Copy draft</button><button class="btn primary" type="button" id="approve-send" onclick="approveAndSendReply()" disabled>Approve &amp; Send</button></div><small id="reply-status" class="sub">Manual draft: copy it into your email app. No email will be sent from this screen.</small></div></div>
+{% if reply_drafts %}<div class="panel"><div class="eyebrow">YOUR REPLY DRAFTS</div><h2>Recently generated</h2>{% for d in reply_drafts %}<div class="list-row"><div class="list-main"><b>{{d.subject or 'No subject'}}</b><small>{{d.recipient or 'No recipient'}} · {{d.status}} · {{d.created_at.strftime('%d %b %Y %H:%M')}}</small></div><span class="pill">{{d.status}}</span></div>{% endfor %}</div>{% endif %}
+
+
+<style>
+.email-preview{margin-top:10px;color:var(--muted,#a1a1aa);line-height:1.6;overflow-wrap:anywhere}
+.email-full-content{margin-top:12px}
+.email-full-content summary{cursor:pointer;color:var(--lime,#c5f36b);font-weight:700;padding:8px 0}
+.email-body{margin-top:10px;padding:16px;border-radius:10px;background:rgba(255,255,255,.04);line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;max-height:560px;overflow:auto}
+.email-row{align-items:flex-start}.email-info{min-width:0;flex:1}
+</style>
+{% endblock %}

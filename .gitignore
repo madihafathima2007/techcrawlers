@@ -1,0 +1,9 @@
+instance/
+*.db
+*.sqlite3
+gmail-token-*.json
+credentials.json
+client_secret*.json
+.venv/
+__pycache__/
+.env

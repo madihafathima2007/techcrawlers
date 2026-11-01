@@ -1,0 +1,42 @@
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}COLLAB{% endblock %}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="{{url_for('static',filename='style.css')}}"></head><body class="app-body"><aside class="sidebar" id="appSidebar" aria-label="Main navigation"><a class="brand" href="{{url_for('dashboard')}}"><span class="brand-mark">C</span><span>COLLAB<small>WORKSPACE</small></span></a>{% if current_user.account_type=='company' %}
+<div class="side-label">COMPANY WORKSPACE</div>
+<nav class="primary-nav" aria-label="Company workspace navigation">
+<a href="{{url_for('dashboard')}}" class="{{'active' if request.path in ['/','/dashboard'] else ''}}"><span>⌂</span> Overview</a>
+<a href="{{url_for('marketplace')}}" class="{{'active' if request.path.startswith('/marketplace') else ''}}"><span>◎</span> Creator discovery</a>
+<a href="{{url_for('marketplace')}}#opportunities"><span>◇</span> Campaigns & proposals</a>
+<a href="{{url_for('trust_center')}}" class="{{'active' if request.path.startswith('/trust') else ''}}"><span>✧</span> Brand partnerships</a>
+<a href="{{url_for('company_calendar')}}" class="{{'active' if request.path.startswith('/company/calendar') else ''}}"><span>▦</span> Campaign calendar</a>
+<a href="{{url_for('tasks_page')}}" class="{{'active' if request.path=='/tasks' else ''}}"><span>✓</span> Team tasks</a>
+<a href="{{url_for('inbox_page')}}" class="{{'active' if request.path=='/inbox' else ''}}"><span>✉</span> Inbox</a>
+</nav>
+{% else %}
+<div class="side-label">CREATOR WORKSPACE</div>
+<nav class="primary-nav" aria-label="Creator workspace navigation">
+<a href="{{url_for('dashboard')}}" class="{{'active' if request.path in ['/','/dashboard'] else ''}}"><span>⌂</span> Overview</a>
+<a href="{{url_for('marketplace')}}" class="{{'active' if request.path.startswith('/marketplace') else ''}}"><span>◇</span> Brand marketplace</a>
+<a href="{{url_for('trust_center')}}" class="{{'active' if request.path.startswith('/trust') else ''}}"><span>✧</span> Trust Center</a>
+</nav>
+<div class="side-label sidebar-section-label">CONTENT & WORK</div>
+<nav class="primary-nav" aria-label="Content and work navigation">
+<a href="{{url_for('planner_page')}}" class="{{'active' if request.path=='/planner' else ''}}"><span>▦</span> Content planner</a>
+<a href="{{url_for('calendar_page')}}" class="{{'active' if request.path.startswith('/calendar') else ''}}"><span>▣</span> Content calendar</a>
+<a href="{{url_for('ideas_page')}}" class="{{'active' if request.path=='/ideas' else ''}}"><span>✳</span> Idea studio</a>
+<a href="{{url_for('campaigns_page')}}" class="{{'active' if request.path=='/campaigns' else ''}}"><span>◇</span> Partnerships</a>
+<a href="{{url_for('tasks_page')}}" class="{{'active' if request.path=='/tasks' else ''}}"><span>✓</span> Tasks</a>
+<a href="{{url_for('inbox_page')}}" class="{{'active' if request.path=='/inbox' else ''}}"><span>✉</span> Smart inbox</a>
+</nav>
+{% endif %}
+<div class="sidebar-bottom">
+<div class="sidebar-insights">
+<div class="side-label">INSIGHTS</div>
+<nav class="primary-nav" aria-label="Insights navigation">
+<a href="{{url_for('analytics_page')}}" class="{{'active' if request.path=='/analytics' else ''}}"><span>↗</span> Analytics</a>
+<a href="{{url_for('finance_page')}}" class="{{'active' if request.path=='/finance' else ''}}"><span>₹</span> Finances</a>
+</nav>
+</div>
+<div class="sidebar-account-links">
+<div class="side-label">SETTINGS</div>
+{% if current_user.account_type=='individual' %}<a href="{{url_for('social_accounts_page')}}" class="{{'active' if request.path.startswith('/social-accounts') else ''}}">◎ &nbsp; Social accounts</a>{% endif %}
+<a href="{{url_for('integrations_page')}}" class="{{'active' if request.path=='/integrations' else ''}}">⌘ &nbsp; Integrations</a>
+</div>
+</div></aside><div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" aria-hidden="true"></div><main class="main"><header class="topbar"><div class="topbar-left"><button class="menu-toggle" id="menuToggle" type="button" onclick="toggleSidebar()" aria-label="Open navigation menu" aria-expanded="false" aria-controls="appSidebar"><span></span><span></span><span></span></button><div class="crumb">{{'COMPANY' if current_user.account_type=='company' else 'CREATOR'}} <span>/</span> {% block crumb %}OVERVIEW{% endblock %}</div></div><div class="top-actions"><span class="workspace-label">{{current_user.company_name if current_user.account_type=='company' else 'Personal workspace'}}</span><button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">◐</button><details class="notification-menu"><summary class="notification-trigger" aria-label="Notifications"><span class="notification-bell">♢</span>{% if unread_notifications %}<span class="notification-badge">{{unread_notifications if unread_notifications < 100 else '99+'}}</span>{% endif %}</summary><div class="notification-popover"><div class="notification-popover-head"><b>Notifications</b><a href="{{url_for('notifications_page')}}">View all</a></div>{% if recent_notifications %}{% for item in recent_notifications %}<div class="notification-mini {{'unread' if not item.is_read else ''}}"><span class="notification-mini-dot"></span><div><b>{{item.title}}</b><small>{{item.message}}</small><time>{{item.created_at.strftime('%b %d, %H:%M')}}</time></div></div>{% endfor %}{% else %}<div class="notification-empty">You're all caught up.</div>{% endif %}<a class="notification-footer" href="{{url_for('notifications_page')}}">Open notification centre</a></div></details><details class="account-menu"><summary class="account-trigger" aria-label="Open account menu"><span class="avatar account-avatar">{% if current_user.avatar_url %}<img src="{{current_user.avatar_url}}" alt="Profile picture">{% else %}{{current_user.name[:1]|upper}}{% endif %}</span><span class="account-trigger-copy"><b>{{current_user.name}}</b><small>{{current_user.email}}</small></span><span class="account-chevron">⌄</span></summary><div class="account-popover"><div class="account-popover-head"><span class="avatar account-avatar large">{% if current_user.avatar_url %}<img src="{{current_user.avatar_url}}" alt="">{% else %}{{current_user.name[:1]|upper}}{% endif %}</span><div><b>{{current_user.name}}</b><small>{{current_user.email}}</small></div></div><a href="{{url_for('profile')}}">◎ &nbsp; My profile</a><a href="{{url_for('switch_account')}}">⇄ &nbsp; Switch account</a><a class="account-signout" href="{{url_for('logout')}}">↪ &nbsp; Sign out</a></div></details></div></header><section class="content">{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="notice {{category}}">{{message}}</div>{% endfor %}{% endwith %}{% block content %}{% endblock %}</section></main><script src="{{url_for('static',filename='app.js')}}"></script>{% block scripts %}{% endblock %}</body></html>

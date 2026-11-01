@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Integrations · COLLAB{% endblock %}
+{% block crumb %}INTEGRATIONS{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">YOUR CREATOR TOOLKIT</div>
+    <h1>Everything works <span class="brand-accent">better together.</span></h1>
+    <p class="sub">Connect the platforms and services you want to use with COLLAB.</p>
+  </div>
+</div>
+<div class="integration-grid">
+  <article class="integration-card">
+    <div class="integration-icon youtube">▶</div>
+    <span class="pill">API setup required</span>
+    <h3>YouTube</h3>
+    <p>Plan video content and prepare for channel analytics, video performance and publishing through YouTube APIs.</p>
+    <small>Not connected</small>
+  </article>
+  <article class="integration-card">
+    <div class="integration-icon instagram">◎</div>
+    <span class="pill">API setup required</span>
+    <h3>Instagram</h3>
+    <p>Plan posts and prepare for publishing and Insights using eligible Meta app permissions.</p>
+    <small>Not connected</small>
+  </article>
+  <article class="integration-card">
+    <div class="integration-icon discord">◉</div>
+    <span class="pill">Bot setup required</span>
+    <h3>Discord</h3>
+    <p>Connect a Discord server in a future setup to receive creator workspace alerts and collaboration updates.</p>
+    <small>Not connected</small>
+  </article>
+  <article class="integration-card">
+    <div class="integration-icon stripe">₹</div>
+    <span class="pill">Provider setup required</span>
+    <h3>Payments</h3>
+    <p>Track income manually today. Payment-provider connections can be enabled after choosing a supported provider.</p>
+    <small>Manual tracking available</small>
+  </article>
+</div>
+<div class="demo-disclosure">
+  <b>About connections</b>
+  <p>These are the four integrations currently listed in COLLAB. External connections require their own developer apps, credentials, permissions and user consent. The cards do not mean an external account is already connected.</p>
+</div>
+{% endblock %}

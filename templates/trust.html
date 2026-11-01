@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Trust Center · COLLAB{% endblock %}
+{% block crumb %}TRUST CENTER{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">ACCOUNTABILITY ON BOTH SIDES</div><h1>Trust & <span class="lime">transparency.</span></h1><p class="sub">Track collaboration progress, payment commitments and verified two-way feedback.</p></div></div>
+<div class="panel" style="margin-bottom:22px"><div class="panel-head"><h2>How mutual reviews work</h2><span class="status">Double-blind</span></div><p class="sub">After a collaboration is marked completed, both parties can submit one review. Neither review is visible until both have submitted. Reviews are tied to a recorded COLLAB collaboration.</p></div>
+<div class="section-head"><div><div class="eyebrow">YOUR VERIFIED COLLABORATIONS</div><h2>Collaboration history</h2></div><span class="count">{{collaborations|length}}</span></div>
+{% for c in collaborations %}
+<div class="panel" style="margin-bottom:18px">
+ <div class="panel-head"><div><h2>{{c.title}}</h2><p class="sub">{{c.company.company_name or c.company.name}} × {% if current_user.account_type=='company' %}<a href="{{url_for('creator_public_profile',creator_id=c.creator.id)}}">{{c.creator.name}}</a>{% else %}{{c.creator.name}}{% endif %}</p></div><span class="status">{{c.status}}</span></div>
+ <div style="display:flex;justify-content:flex-end;margin:10px 0"><a class="btn secondary" href="{{url_for('deal_room',collab_id=c.id)}}">Open Brand Deal Room ↗</a></div>
+ <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:14px 0">
+  <div class="stat-card"><small>Agreed payment</small><strong>₹{{'%.2f'|format(c.agreed_amount or 0)}}</strong></div>
+  <div class="stat-card"><small>Payment status</small><strong>{{c.payment_status}}</strong></div>
+  <div class="stat-card"><small>Payment due</small><strong>{{c.payment_due_date or 'Not set'}}</strong></div>
+ </div>
+ {% if current_user.account_type=='company' %}
+ <form method="post" action="{{url_for('update_collaboration_payment',collab_id=c.id)}}" class="form-grid" style="margin:12px 0">
+  <label>Agreed amount (₹)<input type="number" min="0" step="0.01" name="amount" value="{{c.agreed_amount or 0}}"></label>
+  <label>Payment due date<input type="date" name="due_date" value="{{c.payment_due_date}}"></label>
+  <label>Payment status<select name="payment_status"><option {{'selected' if c.payment_status=='Not paid'}}>Not paid</option><option {{'selected' if c.payment_status=='Pending'}}>Pending</option><option {{'selected' if c.payment_status=='Paid'}}>Paid</option><option {{'selected' if c.payment_status=='Disputed'}}>Disputed</option></select></label>
+  <label>Paid date<input type="date" name="paid_date" value="{{c.paid_date}}"></label>
+  <button class="btn secondary" type="submit">Update payment record</button>
+ </form>
+ {% endif %}
+ {% if c.status!='Completed' %}
+ <form method="post" action="{{url_for('complete_collaboration',collab_id=c.id)}}"><button class="btn secondary" type="submit">Mark collaboration completed</button></form>
+ {% else %}
+  {% set my_review = namespace(found=false) %}{% for r in c.reviews %}{% if r.reviewer_id==current_user.id %}{% set my_review.found=true %}{% endif %}{% endfor %}
+  {% if not my_review.found %}
+  <div class="divider"></div><h3>Submit your private review</h3><p class="sub">Your review stays hidden until the other party submits theirs.</p>
+  <form method="post" action="{{url_for('submit_collaboration_review',collab_id=c.id)}}" class="form-grid">
+   <label>Overall experience (1–5)<select name="rating" required><option value="">Choose rating</option>{% for n in range(5,0,-1) %}<option value="{{n}}">{{n}} / 5</option>{% endfor %}</select></label>
+   <label>Communication (1–5)<select name="communication_rating"><option value="">Optional</option>{% for n in range(5,0,-1) %}<option value="{{n}}">{{n}} / 5</option>{% endfor %}</select></label>
+   {% if current_user.account_type=='individual' %}<label>Payment experience (1–5)<select name="payment_rating"><option value="">Optional</option>{% for n in range(5,0,-1) %}<option value="{{n}}">{{n}} / 5</option>{% endfor %}</select></label>{% endif %}
+   <label style="grid-column:1/-1">Your feedback<textarea name="comment" maxlength="1500" placeholder="Share what went well and what could improve..."></textarea></label>
+   <button class="btn primary" type="submit">Submit review privately</button>
+  </form>
+  {% else %}<p class="notice success">Your review is submitted. Waiting for the other party.</p>{% endif %}
+  {% if c.reviews|length==2 %}<div class="divider"></div><h3>Verified mutual reviews</h3>{% for r in c.reviews %}<div style="padding:12px 0;border-bottom:1px solid var(--line)"><b>{{r.reviewer.name}}</b> · {{r.rating}}/5{% if r.communication_rating %}<small> · Communication {{r.communication_rating}}/5</small>{% endif %}<p>{{r.comment or 'No written comment.'}}</p></div>{% endfor %}{% endif %}
+ {% endif %}
+</div>
+{% else %}<div class="panel empty">No COLLAB collaborations yet. Accept a creator proposal, invitation or direct collaboration request to create a verified collaboration record.</div>{% endfor %}
+{% if visible_reviews %}<div class="section-head"><div><div class="eyebrow">YOUR REPUTATION</div><h2>Reviews unlocked</h2></div></div><div class="panel"><p class="sub">Reviews appear only after both participants submit their feedback. Only reviews from your collaborations are shown here.</p>{% for r in visible_reviews %}<div style="padding:12px 0;border-bottom:1px solid var(--line)"><b>{{r.reviewer.name}}</b> rated {{r.rating}}/5<p>{{r.comment}}</p></div>{% endfor %}</div>{% endif %}
+{% endblock %}

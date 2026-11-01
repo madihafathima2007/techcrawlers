@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{{ deal.title }} · Brand Deal Room{% endblock %}
+{% block crumb %}BRAND DEAL ROOM{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">COLLABORATION WORKSPACE</div><h1>{{ deal.title }}</h1><p class="sub">{{ deal.company.company_name or deal.company.name }} × <a href="{{ url_for('creator_public_profile', creator_id=deal.creator.id) }}" class="deal-profile-link">{{ deal.creator.name }}</a></p></div><span class="status">{{ deal.status }}</span></div>
+<div class="deal-grid">
+ <section class="panel deal-main"><div class="panel-head"><div><div class="eyebrow">CAMPAIGN BRIEF</div><h2>Agreement & deliverables</h2></div><span class="status">{{ 'Company workspace' if current_user.account_type=='company' else 'Creator workspace' }}</span></div>
+ {% if current_user.account_type=='company' %}
+ <form method="post" action="{{ url_for('deal_room_update', collab_id=deal.id) }}" class="form-grid">
+  <label>Campaign / partnership title<input name="title" maxlength="220" required value="{{ deal.title }}"></label>
+  <label>Agreed payment (₹)<input type="number" min="0" step="0.01" name="amount" value="{{ deal.agreed_amount or 0 }}"></label>
+  <label>Creator deadline<input type="date" name="deadline" value="{{ deal.deadline or '' }}"></label>
+  <label>Payment due date<input type="date" name="payment_due_date" value="{{ deal.payment_due_date or '' }}"></label>
+  <label style="grid-column:1/-1">Campaign brief<textarea name="brief" rows="4" placeholder="Describe the campaign, content requirements, tags, links and approval notes...">{{ deal.brief or '' }}</textarea></label>
+  <button class="btn primary" type="submit">Save agreement & sync creator planner</button>
+ </form>
+ {% else %}
+ <div class="deal-facts"><div><small>Agreed payment</small><strong>₹{{ '%.2f'|format(deal.agreed_amount or 0) }}</strong></div><div><small>Creator deadline</small><strong>{{ deal.deadline or 'Company has not set a deadline yet' }}</strong></div><div><small>Payment due</small><strong>{{ deal.payment_due_date or 'Not set' }}</strong></div></div>
+ <div class="deal-brief"><h3>Campaign brief</h3><p>{{ deal.brief or 'The company has not added a campaign brief yet.' }}</p></div>
+ {% if deal.deadline %}<div class="notice success">The company deadline has been added to your Tasks and Content Calendar. If the company changes it, both entries will be updated.</div>{% else %}<div class="notice">Waiting for the company to set the campaign deadline and brief.</div>{% endif %}
+ {% endif %}
+ <div class="divider"></div><div class="panel-head"><div><div class="eyebrow">DELIVERABLE CHECKLIST</div><h2>Work to submit</h2></div><span class="count">{{ deliverables|length }}</span></div>
+ {% for item in deliverables %}<div class="deliverable-row"><div><b>{{ item.title }}</b><small>{{ item.due_date or 'No separate due date' }} · {{ item.status }}</small>{% if item.notes %}<p>{{ item.notes }}</p>{% endif %}{% if item.submission_url %}<a href="{{ item.submission_url }}" target="_blank" rel="noopener">View submission</a>{% endif %}</div>
+ {% if current_user.account_type=='individual' %}<form method="post" action="{{ url_for('deal_deliverable_submit', collab_id=deal.id, item_id=item.id) }}"><input type="url" name="submission_url" placeholder="Paste content link" value="{{ item.submission_url or '' }}"><button class="btn secondary" type="submit">Submit / update</button></form>{% else %}<form method="post" action="{{ url_for('deal_deliverable_review', collab_id=deal.id, item_id=item.id) }}"><select name="status"><option {{ 'selected' if item.status=='Submitted' }}>Submitted</option><option {{ 'selected' if item.status=='Approved' }}>Approved</option><option {{ 'selected' if item.status=='Revision requested' }}>Revision requested</option></select><input name="notes" placeholder="Feedback" value="{{ item.notes or '' }}"><button class="btn secondary" type="submit">Save review</button></form>{% endif %}</div>{% else %}<p class="sub">No individual deliverables have been added yet.</p>{% endfor %}
+ {% if current_user.account_type=='company' %}<form method="post" action="{{ url_for('deal_deliverable_add', collab_id=deal.id) }}" class="form-grid deal-add"><label>Deliverable title<input name="title" required placeholder="e.g. Instagram Reel"></label><label>Due date<input type="date" name="due_date"></label><label style="grid-column:1/-1">Instructions (optional)<input name="notes" placeholder="Format, hashtags, mentions or requirements"></label><button class="btn secondary" type="submit">Add deliverable</button></form>{% endif %}
+ </section>
+ <aside class="panel deal-side"><div class="eyebrow">PARTICIPANTS</div><h3>Company</h3><b>{{ deal.company.company_name or deal.company.name }}</b><small>{{ deal.company.email }}</small><div class="divider"></div><h3>Creator</h3><a class="deal-creator-card" href="{{ url_for('creator_public_profile', creator_id=deal.creator.id) }}"><span class="avatar">{% if deal.creator.avatar_url %}<img src="{{ deal.creator.avatar_url }}" alt="">{% else %}{{ deal.creator.name[:1]|upper }}{% endif %}</span><span><b>{{ deal.creator.name }}</b><small>View creator profile ↗</small></span></a><div class="divider"></div><div class="eyebrow">PAYMENT TRACKING</div><b>{{ deal.payment_status }}</b><small>Payment details are managed in Trust Center.</small><a class="btn secondary" href="{{ url_for('trust_center') }}">Open Trust Center</a></aside>
+</div>
+{% endblock %}

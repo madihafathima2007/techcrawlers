@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}{{ creator.name }} · Creator profile{% endblock %}
+{% block crumb %}CREATOR PROFILE{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">CREATOR PROFILE</div><h1>{{ creator.name }}</h1><p class="sub">{{ creator.category or 'Creator' }}{% if creator.niche %} · {{ creator.niche }}{% endif %}</p></div></div>
+<div class="panel public-creator-profile"><div class="public-avatar">{% if creator.avatar_url %}<img src="{{ creator.avatar_url }}" alt="{{ creator.name }}">{% else %}{{ creator.name[:1]|upper }}{% endif %}</div><div><h2>{{ creator.name }}</h2><p class="sub">{{ creator.category or 'Creator' }} · {{ creator.niche or 'Niche not specified' }}</p><p>Creator profile and connected social channels.</p>{% if creator.primary_platform %}<span class="status">Primary platform: {{ creator.primary_platform }}</span>{% endif %}</div></div>
+<div class="section-head"><div><div class="eyebrow">CONNECTED SOCIAL PROFILES</div><h2>Social accounts</h2></div></div>
+<div class="social-profile-grid">{% for account in accounts %}<div class="panel"><b>{{ account.platform }}</b><h3>@{{ account.handle }}</h3><div class="deal-facts"><div><small>Followers</small><strong>{{ '{:,}'.format(account.followers or 0) }}</strong></div><div><small>Engagement</small><strong>{{ '%.2f'|format(account.engagement_rate or 0) }}%</strong></div></div>{% if account.profile_url %}<a href="{{ account.profile_url }}" target="_blank" rel="noopener">Open profile ↗</a>{% endif %}</div>{% else %}<div class="panel empty">No social accounts have been added by this creator.</div>{% endfor %}</div>
+{% if creator.website %}<p class="sub">Website: <a href="{{ creator.website }}" target="_blank" rel="noopener">{{ creator.website }}</a></p>{% endif %}
+{% endblock %}
