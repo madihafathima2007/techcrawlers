@@ -227,7 +227,7 @@ The ultimate vision of COLLAB is simple:
 ## Team Members
 
 - **Member 1:** Mohammed Misba Musthafa – Website Development
-- **Member 2:** Aakarsh Murali. P – Backend Development
+- **Member 2:** Akarsh Murali.B – Backend Development
 - **Member 3:** Zaeem Z.M – UI/UX Design
 - **Member 4:** Madiha Fathima – Research and Presentation
 
