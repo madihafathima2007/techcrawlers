@@ -24,18 +24,24 @@ GMAIL_SCOPES = [
 ]
 
 app = Flask(__name__)
+
+database_url = os.getenv('DATABASE_URL', 'sqlite:///collab_os.db')
+
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
 app.config.update(
     SECRET_KEY=os.getenv('SECRET_KEY', 'dev-only-change-this-secret-before-deploying'),
-    SQLALCHEMY_DATABASE_URI=os.getenv('DATABASE_URL', 'sqlite:///collab_os.db'),
+    SQLALCHEMY_DATABASE_URI=database_url,
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE='Lax',
 )
+
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please sign in to access your workspace.'
-
 
 
 
