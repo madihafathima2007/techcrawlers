@@ -123,18 +123,67 @@ The development of COLLAB involved collaborative efforts from all team members, 
 
 ## 6. Technology Stack
 
-The project utilizes the following technologies and development tools:
+COLLAB is developed using a Python-based web architecture, combining Flask for backend development, Jinja2 for dynamic template rendering, and PostgreSQL for production database management.
 
-| Component | Technology |
+The following technologies and tools are used throughout the development and deployment of the platform.
+
+| Component | Technology Used |
 |---|---|
-| Frontend | [HTML, CSS, JavaScript / React] |
-| Backend | [Python / Node.js / Other] |
-| Database | [MySQL / MongoDB / Firebase] |
-| UI/UX Design | [Figma / Canva] |
+| Frontend | HTML, CSS, JavaScript, Jinja2 |
+| Backend | Python (Flask) |
+| Database (Production) | PostgreSQL |
+| Database (Local Fallback) | SQLite |
+| UI/UX Design | Figma |
 | Code Editor | Visual Studio Code |
 | Version Control | Git |
 | Repository Hosting | GitHub |
-| Presentation | PowerPoint / Canva |
+| Deployment / Hosting | Render |
+| Authentication | Flask-Login, Authlib |
+| Password Security | Werkzeug Security |
+| Database ORM | SQLAlchemy |
+| Production Server | Gunicorn |
+
+### 6.1 Frontend Technologies
+
+- **HTML:** Used to structure the web pages and application components.
+- **CSS:** Used for styling, layouts, visual elements, and responsive design.
+- **JavaScript:** Used to implement client-side interactions and dynamic functionality.
+- **Jinja2:** Used as the template engine to render dynamic HTML pages and integrate backend data.
+
+### 6.2 Backend Technologies
+
+- **Python:** The primary programming language used for backend development.
+- **Flask:** A lightweight Python web framework used to build application routes, handle HTTP requests, manage sessions, and implement server-side functionality.
+- **SQLAlchemy:** Used as the Object Relational Mapper (ORM) to interact with databases through Python models and queries.
+
+### 6.3 Database Management
+
+COLLAB uses a dual-database approach to support both local development and production deployment.
+
+- **PostgreSQL:** Used as the primary production database for persistent data storage and management.
+- **SQLite:** Used as a lightweight local fallback database during development and testing.
+
+SQLAlchemy provides a consistent database interaction layer across both environments.
+
+### 6.4 Authentication and Security
+
+The platform incorporates authentication and security technologies to manage user access and protect sensitive information.
+
+- **Flask-Login:** Handles user session management and login authentication.
+- **Authlib:** Provides authentication and authorization integrations, including OAuth functionality where configured.
+- **Werkzeug Security:** Provides password hashing and verification mechanisms to protect user credentials.
+
+### 6.5 Deployment and Hosting
+
+- **Render:** Used for hosting and deploying the COLLAB web application.
+- **Gunicorn:** Used as the production WSGI HTTP server to run the Flask application.
+- **Git and GitHub:** Used for source-code version control, collaboration, and repository management.
+
+### 6.6 Development Environment
+
+Visual Studio Code is used as the primary development environment for writing, debugging, and maintaining the application code.
+
+Git is used to track source-code changes, while GitHub provides a centralized repository for team collaboration and project management.
 
 *Note: Replace the placeholders with the actual technologies used during development.*
 
